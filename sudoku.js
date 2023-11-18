@@ -59,12 +59,11 @@ function setGame(loadDataInfo) {
 
 function createSudokuBoard(data) {
     debugger;
-    const board = Array.from({ length: 9 }, () => Array.from({ length: 9 }, () => 0));
+    const board = Array.from({ length: 9 }, () => Array.from({ length: 9 }, () => 0)); // creating 9 arrays which have 9 values [0,0,0,...] * 9
 
-
-    for(let i = 0; i < data.length; i++){
+    for(let i = 0; i < data.length; i++){  // data[i] = each array e.g.[232234327]
         if(i == 0){
-            const [col1, row1, val1, col2, row2, val2, col3, row3, val3] = data[i].val.split('').map(Number);
+            const [col1, row1, val1, col2, row2, val2, col3, row3, val3] = data[i].val.split('').map(Number); // change individual string to number and return it
             board[row1 - 1][col1 - 1] = val1;
             board[row2 - 1][col2 - 1] = val2;
             board[row3 - 1][col3 - 1] = val3;
@@ -117,24 +116,22 @@ function createSudokuBoard(data) {
             board[row2 + 5][col2 + 5] = val2;
             board[row3 + 5][col3 + 5] = val3;
         }
-      
-
     }
     
     // Board 9x9
-    for (let r = 0; r < 9; r++) {
+    for (let r = 0; r < 9; r++) {   // row loop 
         debugger;
-        for (let c = 0; c < 9; c++) {
+        for (let c = 0; c < 9; c++) {  //column loop
             let tile = document.createElement("div");
-            tile.id = r.toString() + "-" + c.toString();
-            if (board[r][c] != "0") {
+            tile.id = r.toString() + "-" + c.toString();  // assign each box row&column id  0-0
+            if (board[r][c] != "0") {  
                 tile.innerText = board[r][c];
                 tile.classList.add("tile-start");
             }
             if (r == 2 || r == 5) {
-                tile.classList.add("horizontal-line");
+                tile.classList.add("horizontal-line");  // add horizontal line 
             }
-            if (c == 2 || c == 5) {
+            if (c == 2 || c == 5) {  // add vertical line 
                 tile.classList.add("vertical-line");
             }
             tile.addEventListener("click", selectTile);
