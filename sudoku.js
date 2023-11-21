@@ -3,7 +3,7 @@ let numSelected = null;
 let tileSelected = null;
 let loadDataInfo = null
 var errors = 0;
-
+const board = Array.from({ length: 9 }, () => Array.from({ length: 9 }, () => 0)); // creating 9 arrays which have 9 values [0,0,0,...] * 9
 
 let solution = [
     "387491625",
@@ -18,7 +18,7 @@ let solution = [
 ]
 
 const MockData = (data) => { // Funcion to load information from Json
-    debugger;
+    //debugger;
     loadDataInfo = JSON.parse(data);
     setGame(loadDataInfo); // callback function to create digits number and set numbers.
 
@@ -53,13 +53,13 @@ function setGame(loadDataInfo) {
 
     // ------------------------ Remember 232234327 for 2 is column 3 is row and 2 is values, if have in 2 and 3 need be replace 4 like that example. --//
     
-   debugger;
+   //debugger;
     createSudokuBoard(loadDataInfo);
 }
 
 function createSudokuBoard(data) {
-    debugger;
-    const board = Array.from({ length: 9 }, () => Array.from({ length: 9 }, () => 0)); // creating 9 arrays which have 9 values [0,0,0,...] * 9
+    //debugger;
+    
 
     for(let i = 0; i < data.length; i++){  // data[i] = each array e.g.[232234327]
         if(i == 0){
@@ -120,12 +120,16 @@ function createSudokuBoard(data) {
     
     // Board 9x9
     for (let r = 0; r < 9; r++) {   // row loop 
-        debugger;
+        //debugger;
         for (let c = 0; c < 9; c++) {  //column loop
-            let tile = document.createElement("div");
+            //let tile = document.createElement("div");
+            let tile = document.createElement("input");
+            tile.type = "text";
             tile.id = r.toString() + "-" + c.toString();  // assign each box row&column id  0-0
             if (board[r][c] != "0") {  
-                tile.innerText = board[r][c];
+                //tile.innerText = board[r][c];
+                tile.value = board[r][c];
+                tile.setAttribute("disabled", true);
                 tile.classList.add("tile-start");
             }
             if (r == 2 || r == 5) {
@@ -134,13 +138,32 @@ function createSudokuBoard(data) {
             if (c == 2 || c == 5) {  // add vertical line 
                 tile.classList.add("vertical-line");
             }
-            tile.addEventListener("click", selectTile);
+            tile.addEventListener("change", validInput);
             tile.classList.add("tile");
            
             document.getElementById("board").append(tile);
         }
     }
   }
+
+const validInput = (event)=>{
+    let flag = false;
+    console.log( event.target.value);
+    for(let i = 1; i<10;i++){
+        if(event.target.value == i || event.target.value == ''){
+            flag = true;
+            if(event.target.value != ''){
+                const [r, c] = event.target.id.split('-').map(Number);
+                board[r][c]= Number(event.target.value);
+            }
+            break;
+        }
+    }
+    if(flag == false){
+        alert("Please input only one digit from 1-9")
+        event.target.value = '';
+    }
+}
 
 function selectNumber() {
     if (numSelected != null) {
