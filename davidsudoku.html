@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <link rel="stylesheet" href="sudoku.css">
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> -->
+    
+    <title>Sudoku</title>
+</head>
+<body>
+    <h1>Sudoku Game</h1>
+    <hr>
+    <h2 id="errors">0</h2>
+
+    <!-- 9x9 board -->
+    <div id="board"></div>
+    <br>
+    <!--
+    <div id="digits">
+    </div>-->
+    <button>Validate</button>
+</body>
+<script>
+    
+let numSelected = null;
+let tileSelected = null;
+let loadDataInfo = null
+var errors = 0;
+const board = Array.from({ length: 9 }, () => Array.from({ length: 9 }, () => 0)); // creating 9 arrays which have 9 values [0,0,0,...] * 9
+
+const MockData = (data) => { // Funcion to load information from Json
+    //debugger;
+    loadDataInfo = JSON.parse(data);
+    createSudokuBoard(loadDataInfo);
+    //setGame(loadDataInfo); // callback function to create digits number and set numbers.
+
+}
+
+const errorFun = (msg) => {
+    alert(msg);
+}
+let loadPromise = new Promise((load, error) => {
+    let httpReq = new XMLHttpRequest();
+    httpReq.onload = () => {
+        if (httpReq.status == 200)
+            load(httpReq.response);
+        else
+            error(httpReq.statusText);
+    }
+    httpReq.open("GET", "./MOCK_DATA.json");
+    httpReq.send();
+}).then(MockData, errorFun);
+
+function createSudokuBoard(data) {
+    //debugger;
+    
+
+    for(let i = 0; i < data.length; i++){  // data[i] = each array e.g.[232234327]
+        if(i == 0){
+            const [col1, row1, val1, col2, row2, val2, col3, row3, val3] = data[i].val.split('').map(Number); // change individual string to number and return it
+            board[row1 - 1][col1 - 1] = val1;
+            board[row2 - 1][col2 - 1] = val2;
+            board[row3 - 1][col3 - 1] = val3;
+        }
+        else if(i == 1){
+            const [col1, row1, val1, col2, row2, val2, col3, row3, val3] = data[i].val.split('').map(Number);
+            board[row1 - 1][col1 + 2] = val1;
+            board[row2 - 1][col2 + 2] = val2;
+            board[row3 - 1][col3 + 2] = val3;
+        }
+        else if(i == 2){
+            const [col1, row1, val1, col2, row2, val2, col3, row3, val3] = data[i].val.split('').map(Number);
+            board[row1 - 1][col1 + 5] = val1;
+            board[row2 - 1][col2 + 5] = val2;
+            board[row3 - 1][col3 + 5] = val3;
+        }
+        else if(i == 3){
+            const [col1, row1, val1, col2, row2, val2, col3, row3, val3] = data[i].val.split('').map(Number);
+            board[row1 + 2][col1 - 1] = val1;
+            board[row2 + 2][col2 - 1] = val2;
+            board[row3 + 2][col3 - 1] = val3;
+        }
+        else if(i == 4){
+            const [col1, row1, val1, col2, row2, val2, col3, row3, val3] = data[i].val.split('').map(Number);
+            board[row1 + 2][col1 + 2] = val1;
+            board[row2 + 2][col2 + 2] = val2;
+            board[row3 + 2][col3 + 2] = val3;
+        }
+        else if(i == 5){
+            const [col1, row1, val1, col2, row2, val2, col3, row3, val3] = data[i].val.split('').map(Number);
+            board[row1 + 2][col1 + 5] = val1;
+            board[row2 + 2][col2 + 5] = val2;
+            board[row3 + 2][col3 + 5] = val3;
+        }
+        else if(i == 6){
+            const [col1, row1, val1, col2, row2, val2, col3, row3, val3] = data[i].val.split('').map(Number);
+            board[row1 + 5][col1 - 1] = val1;
+            board[row2 + 5][col2 - 1] = val2;
+            board[row3 + 5][col3 - 1] = val3;
+        }
+        else if(i == 7){
+            const [col1, row1, val1, col2, row2, val2, col3, row3, val3] = data[i].val.split('').map(Number);
+            board[row1 + 5][col1 + 2] = val1;
+            board[row2 + 5][col2 + 2] = val2;
+            board[row3 + 5][col3 + 2] = val3;
+        }
+        else if(i == 8){
+            const [col1, row1, val1, col2, row2, val2, col3, row3, val3] = data[i].val.split('').map(Number);
+            board[row1 + 5][col1 + 5] = val1;
+            board[row2 + 5][col2 + 5] = val2;
+            board[row3 + 5][col3 + 5] = val3;
+        }
+    }
+    
+    // Board 9x9
+    for (let r = 0; r < 9; r++) {   // row loop 
+        //debugger;
+        for (let c = 0; c < 9; c++) {  //column loop
+            //let tile = document.createElement("div");
+            let tile = document.createElement("input");
+            tile.type = "text";
+            tile.id = r.toString() + "-" + c.toString();  // assign each box row&column id  0-0
+            if (board[r][c] != "0") {  
+                //tile.innerText = board[r][c];
+                tile.value = board[r][c];
+                tile.setAttribute("disabled", true);
+                tile.classList.add("tile-start");
+            }
+            if (r == 2 || r == 5) {
+                tile.classList.add("horizontal-line");  // add horizontal line 
+            }
+            if (c == 2 || c == 5) {  // add vertical line 
+                tile.classList.add("vertical-line");
+            }
+            tile.addEventListener("change", validInput);
+            tile.classList.add("tile");
+           
+            document.getElementById("board").append(tile);
+        }
+    }
+  }
+
+const validInput = (event)=>{
+    let flag = false;
+    for(let i = 1; i<10;i++){
+        if(event.target.value == i || event.target.value == ''){
+            flag = true;
+            if(event.target.value != ''){
+                event.target.classList.remove("empty");
+                event.target.classList.remove("test");
+                const [r, c] = event.target.id.split('-').map(Number);
+                board[r][c]= Number(event.target.value);
+            }
+            break;
+        }
+    }
+    if(flag == false){
+        alert("Please input only one digit from 1-9")
+        event.target.value = '';
+        event.target.classList.add("empty");
+    }
+}
+
+//Validate Button
+document.querySelectorAll("button")[0].addEventListener("click",()=>{
+    errors = 0;
+    //RESET
+    for(let r in board){
+        for(let c in board[r]){
+            let tile = document.getElementById(`${r}-${c}`);
+            tile.classList.remove("rowtest","coltest","test");
+        }
+    }
+
+    //ROW AND COLUMN VALIDATION
+    for(let r in board){
+        for(let c in board[r]){
+            let tile = document.getElementById(`${r}-${c}`);
+            //tile.classList.remove("test");
+            
+            if(board[r][c]==0){
+                //ERROR
+                tile.classList.add("empty");
+            }else{
+                //ROW
+                for(let i=0;i<9;i++){
+                    if(board[r][c] == board[r][i] && board[r][i] != 0 && i != c){
+                        tile.classList.add("rowtest");
+                        errors += 0.5;
+                    }
+                }
+            }
+            //COLUMN
+            if(board[c][r] != 0){
+                for(let i=0;i<9;i++){
+                    if(board[c][r] == board[i][r] && board[i][r] != 0 && i != c){
+                        document.getElementById(`${c}-${r}`).classList.add("coltest");
+                        errors += 0.5;
+                    }
+                }
+            }
+        }
+    }
+
+    //VALIDATING 3X3
+    let vArray1 = [];
+    let vArray2 = [];
+    let vArray3 = [];
+    let vArray4 = [];
+    let vArray5 = [];
+    let vArray6 = [];
+    let vArray7 = [];
+    let vArray8 = [];
+    let vArray9 = [];
+    for(let r = 0; r<9; r++){
+        if(r<3){
+            for(let c = 0;c<3;c++){
+                if(board[r][c] != 0){
+                    vArray1.push(document.getElementById(`${r}-${c}`));
+                }
+                if(board[r][c+3] != 0){
+                    vArray2.push(document.getElementById(`${r}-${c+3}`));
+                }
+                if(board[r][c+6] != 0){
+                    vArray3.push(document.getElementById(`${r}-${c+6}`));
+                }
+            }
+        }
+        if(r>2 && r<6){
+            for(let c = 0;c<3;c++){
+                if(board[r][c] != 0){
+                    vArray4.push(document.getElementById(`${r}-${c}`));
+                }
+                if(board[r][c+3] != 0){
+                    vArray5.push(document.getElementById(`${r}-${c+3}`));
+                }
+                if(board[r][c+6] != 0){
+                    vArray6.push(document.getElementById(`${r}-${c+6}`));
+                }
+            }
+        }
+        if(r>5){
+            for(let c = 0;c<3;c++){
+                if(board[r][c] != 0){
+                    vArray7.push(document.getElementById(`${r}-${c}`));
+                }
+                if(board[r][c+3] != 0){
+                    vArray8.push(document.getElementById(`${r}-${c+3}`));
+                }
+                if(board[r][c+6] != 0){
+                    vArray9.push(document.getElementById(`${r}-${c+6}`));
+                }
+            }
+        }
+    }
+    const validArray = [vArray1,vArray2,vArray3,vArray4,vArray5,vArray6,vArray7,vArray8,vArray9];
+    for(let i of validArray){
+        for(let a of i){
+            for(let b of i){
+                if(a != b && a.value == b.value){
+                    a.classList.add("test");
+                    errors += 0.5;
+                }
+            }
+        }
+    }
+    document.getElementById("errors").innerText = errors;
+});
+</script>
+</html>
