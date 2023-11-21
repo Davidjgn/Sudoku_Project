@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sudoku</title>
+    <style>
+        body {
+            text-align: center;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: auto auto auto;
+            width: 372px;
+            margin: auto;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        td {
+            width: 30px;
+            height: 30px;
+            border: 1px solid black;
+            background-color: white;
+        }
+
+        input {
+            width: 30px;
+            height: 30px;
+            text-align: center;
+        }
+
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="grid">
+        <table class="square">
+            <tr>
+                <td>5</td>
+                <td>4</td>
+                <td>7</td>
+            </tr>
+            <tr>
+                <td>8</td>
+                <td>3</td>
+                <td>9</td>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>2</td>
+                <td>6</td>
+            </tr>
+        </table>
+        <table class="square">
+            <tr>
+                <td>1</td>
+                <td>6</td>
+                <td>9</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>7</td>
+                <td>4</td>
+            </tr>
+            <tr>
+                <td>8</td>
+                <td>5</td>
+                <td>3</td>
+            </tr>
+        </table>
+        <table class="square">
+            <tr>
+                <td>2</td>
+                <td>3</td>
+                <td>8</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td>1</td>
+                <td>6</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td>9</td>
+                <td>7</td>
+            </tr>
+        </table>
+        <table class="square">
+            <tr>
+                <td>9</td>
+                <td>5</td>
+                <td>3</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>8</td>
+                <td>1</td>
+            </tr>
+            <tr>
+                <td>7</td>
+                <td>6</td>
+                <td>4</td>
+            </tr>
+        </table>
+        <table class="square">
+            <tr>
+                <td>4</td>
+                <td>8</td>
+                <td>7</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td>3</td>
+                <td>6</td>
+            </tr>
+            <tr>
+                <td>9</td>
+                <td>2</td>
+                <td>1</td>
+            </tr>
+        </table>
+        <table class="square">
+            <tr>
+                <td>1</td>
+                <td>6</td>
+                <td>2</td>
+            </tr>
+            <tr>
+                <td>9</td>
+                <td>7</td>
+                <td>4</td>
+            </tr>
+            <tr>
+                <td>8</td>
+                <td>5</td>
+                <td>3</td>
+            </tr>
+        </table>
+        <table class="square">
+            <tr>
+                <td>4</td>
+                <td>7</td>
+                <td>5</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>9</td>
+                <td>8</td>
+            </tr>
+            <tr>
+                <td>6</td>
+                <td>1</td>
+                <td>2</td>
+            </tr>
+        </table>
+        <table class="square">
+            <tr>
+                <td>6</td>
+                <td>9</td>
+                <td>8</td>
+            </tr>
+            <tr>
+                <td>7</td>
+                <td>1</td>
+                <td>2</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>4</td>
+                <td>5</td>
+            </tr>
+        </table>
+        <table class="square">
+            <tr>
+                <td>3</td>
+                <td>2</td>
+                <td>1</td>
+            </tr>
+            <tr>
+                <td>6</td>
+                <td>4</td>
+                <td>5</td>
+            </tr>
+            <tr>
+                <td>7</td>
+                <td>8</td>
+                <td>9</td>
+            </tr>
+        </table>
+    </div>
+    <button type="button" disabled>Validate</button>
+    <script>
+        const btn = document.querySelector('button');
+        let table = document.querySelectorAll('table');
+        let tr = Array.from(document.querySelectorAll('tr'));
+        let td = Array.from(document.querySelectorAll('td'));
+
+        let emptyItems = new Array();  // getting empty boxes and pushing it to array, changes the bgc
+        for (let i = 0; i < td.length; i++) {
+            if (td[i].innerText == '') {
+                emptyItems.push(td[i]);
+                td[i].style.backgroundColor = 'yellow';
+            }
+        }
+
+        if (emptyItems.length != 0) {  // if emptyItems has items = if there are empty boxes
+            alert('please fill out the empty boxes');
+        } else {  //  if not = if all boxes are filled up, then remove disabled attribute from button
+            btn.disabled = false;
+        }
+
+        btn.addEventListener('click', () => {
+            // 1.validating each square 
+            let squareNums = [];
+            let squareItems = [];
+            let squareResult = [];
+
+            for (let i = 0; i < td.length; i++) {  // pushing all td values into squareNums array
+                squareNums.push(td[i].innerText);
+            }
+            squareItems = sliceByNumber(squareNums, 9);  // slicing squareNums into 9 arrays  (9)[Array, Array...]
+            // console.log(squareItems)  // index0 ['5', '4', '7', '8', '3', '9', '1', '2', '6'], index1 [] ...index9
+
+            for (let squareObj of squareItems) {  // checking duplicated values within each squares * 9 times
+                let tmpSquareResult = squareObj.filter((val, i, arr) => { // val:value, i:index, arr: array
+                    return arr.indexOf(val) != i;  // returning duplicated values → goes to step 4
+                });
+                if (tmpSquareResult.length > 0) {  // if any of squareObj has duplicated values, then update squareResult.length by push
+                    squareResult.push(tmpSquareResult);
+                }
+            }
+
+            // 2.validating each row
+            //0,3,6     1,4,7     2,5,8,
+            //9,12,15   10,13,16  11,14,17
+            //18,21,24  19,22,25  20,23,26
+            let rowNums01 = [];
+            let rowNums02 = [];
+            let rowNums03 = [];
+            let rowResult01 = [];
+            let rowResult02 = [];
+            let rowResult03 = [];
+            let trIndex = Object.keys(tr);
+
+            for (let j = 0; j < trIndex.length; j++) {  // iterating through all tr
+                if (trIndex[j] == 0 || trIndex[j] % 3 == 0) {  // if tr index is 0 or 3n = very first row of each square
+                    let rowTd = Array.from(tr[j].querySelectorAll('td'));
+                    for (row of rowTd) {
+                        rowNums01.push(row.innerText);  // pushing the td values into rowNums array;
+                    }
+                } else if (trIndex[j] == 1 || trIndex[j] % 3 == 1) { // if tr index is 1 or 3n+1 = second row of each square
+                    let rowTd = Array.from(tr[j].querySelectorAll('td'));
+                    for (row of rowTd) {
+                        rowNums02.push(row.innerText);
+                    }
+                } else { // if tr index is 2 or 3n+2 = third row of each square
+                    let rowTd = Array.from(tr[j].querySelectorAll('td'));
+                    for (row of rowTd) {
+                        rowNums03.push(row.innerText);
+                    }
+                }
+            }
+            rowNums01 = sliceByNumber(rowNums01, 9);
+            rowNums02 = sliceByNumber(rowNums02, 9);
+            rowNums03 = sliceByNumber(rowNums03, 9);
+            // console.log(rowNums01, rowNums02); // index0 ['5', '4', '7', '8', '3', '9', '1', '2', '6'], index1, index2
+
+            for (rowObj of rowNums01) {
+                let tmpRowResult = rowObj.filter((val, i, arr) => {
+                    return arr.indexOf(val) != i;
+                })
+                if (tmpRowResult.length > 0) {  // if any of squareObj has duplicated values, then update squareResult.length by push
+                    rowResult01.push(tmpRowResult);
+                }
+            }
+            for (rowObj of rowNums02) {
+                let tmpRowResult = rowObj.filter((val, i, arr) => {
+                    return arr.indexOf(val) != i;
+                })
+                if (tmpRowResult.length > 0) {
+                    rowResult02.push(tmpRowResult);
+                }
+            }
+            for (rowObj of rowNums03) {
+                let tmpRowResult = rowObj.filter((val, i, arr) => {
+                    return arr.indexOf(val) != i;
+                })
+                if (tmpRowResult.length > 0) {
+                    rowResult03.push(tmpRowResult);
+                }
+            }
+            console.log(squareResult, rowResult01, rowResult02, rowResult03);
+
+            // 4.showing result
+            if (squareResult.length > 0) {  // if there is any duplicated value in square
+                alert('WRONG! ' + squareResult.length + ' DUPLICATED VALUES DETECTED');
+            }
+            if (rowResult01.length > 0 || rowResult02.length > 0 || rowResult03.length > 0) {
+                alert('WRONG! CHECK EACH ROW!');
+            }else {
+                alert('YOU WIN!');
+            }
+        })
+
+        const sliceByNumber = (array, number) => {
+            const length = Math.ceil(array.length / number);  // 81 / 9
+            return new Array(length).fill().map((_, i) => array.slice(i * number, (i + 1) * number));
+        }
+    </script>
+</body>
+
+</html>
