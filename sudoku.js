@@ -24,7 +24,7 @@ let loadPromise = new Promise((load, error) => {
         else
             error(httpReq.statusText);
     }
-    httpReq.open("GET", "./MOCK_DATA.json");
+    httpReq.open("GET", "./MOCK_DATAChanged.json");
     httpReq.send();
 }).then(MockData, errorFun);
 
