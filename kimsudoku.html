@@ -322,23 +322,19 @@
         // Variable to track overall validation status
         let isValidBoard = true;
 
-        // Iterate through the board and perform validation for each row
-        for (let r = 0; r < 9; r++) {
-          // Get the current row from the loaded data
-          let currentRow = [];
-          for (let c = 0; c < 9; c++) {
-            let tile = document.getElementById(`${r}-${c}`);
-            currentRow.push(parseInt(tile.value, 10) || 0); // Parse the value to an integer
-          }
+        // Iterate through the board and perform validation for each row, column, and subgrid
+        for (let i = 0; i < 9; i++) {
+          let row = getRowValues(i);
+          let col = getColumnValues(i);
+          let subgrid = getSubgridValues(i);
 
           // Call the 'isValidRowInBoard' function to validate the current row
-          let isValid = isValidRowInBoard(currentRow);
-          if (!isValid) {
-            console.log(`Row ${r + 1} is invalid.`);
+          let isRowValid = isValidGroup(row, `Row ${i + 1}`);
+          let isColValid = isValidGroup(col, `Column ${i + 1}`);
+          let isSubgridValid = isValidGroup(subgrid, `Subgrid ${i + 1}`);
+
+          if (!isRowValid || !isColValid || !isSubgridValid) {
             isValidBoard = false; // Update overall validation status
-          } else {
-            console.log(`Row ${r + 1} is valid.`);
-            isValidBoard = true; // Update overall validation status
           }
         }
 
@@ -346,38 +342,70 @@
         if (isValidBoard) {
           alert('The entire board is valid.');
         } else {
-          alert('The board contains invalid rows.');
+          alert('The board contains invalid rows, columns, or subgrids.');
         }
       }
 
-      function isValidRowInBoard(row) {
-        // Set named numbersPresent is initialized to keep track of the numbers encountered in the row.
+      function isValidGroup(group, groupName) {
         let numbersPresent = new Set();
 
-        // iterate through each column in the current row
-        for (let col = 0; col < 9; col++) {
-          // get the current value in the Sudoku board for the given row and column
-          let currentValue = row[col];
+        for (let i = 0; i < group.length; i++) {
+          let currentValue = group[i];
 
-          // check if the value is a valid number (1 to 9)
           if (!isNaN(currentValue) && currentValue >= 1 && currentValue <= 9) {
-            // check if the number is already present in the row
             if (numbersPresent.has(currentValue)) {
-              return false; // duplicate number found
+              console.log(`${groupName} is invalid: Duplicate number found.`);
+              return false; // Duplicate number found
             }
             numbersPresent.add(currentValue);
           } else {
-            return false;
+            console.log(`${groupName} is invalid: Invalid value.`);
+            return false; // Invalid value
           }
         }
 
-        // check if all numbers from 1 to 9 are present in the row; if not, return false (invalid)
         for (let i = 1; i <= 9; i++) {
           if (!numbersPresent.has(i)) {
+            console.log(`${groupName} is invalid: Missing number ${i}.`);
             return false; // Missing number
           }
         }
+
+        console.log(`${groupName} is valid.`);
         return true;
+      }
+
+      function getRowValues(row) {
+        let values = [];
+        for (let c = 0; c < 9; c++) {
+          let tile = document.getElementById(`${row}-${c}`);
+          values.push(parseInt(tile.value, 10) || 0);
+        }
+        return values;
+      }
+
+      function getColumnValues(col) {
+        let values = [];
+        for (let r = 0; r < 9; r++) {
+          let tile = document.getElementById(`${r}-${col}`);
+          values.push(parseInt(tile.value, 10) || 0);
+        }
+        return values;
+      }
+
+      function getSubgridValues(subgrid) {
+        let values = [];
+        let startRow = Math.floor(subgrid / 3) * 3;
+        let startCol = (subgrid % 3) * 3;
+
+        for (let r = startRow; r < startRow + 3; r++) {
+          for (let c = startCol; c < startCol + 3; c++) {
+            let tile = document.getElementById(`${r}-${c}`);
+            values.push(parseInt(tile.value, 10) || 0);
+          }
+        }
+
+        return values;
       }
     });
 
@@ -402,3 +430,4 @@
     }
   </script>
 </html>
+
