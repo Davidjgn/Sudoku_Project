@@ -1,0 +1,105 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    text-align: center;
+}
+
+hr {
+    width: 500px;
+}
+
+#errors {
+    color: coral;
+}
+
+#board {
+    width: 432px;
+    height: 432px;
+
+    margin: 0 auto;
+    
+    display: grid;
+    grid-template-columns: auto auto auto auto auto auto auto auto auto;
+    gap: 0;
+    /*display: flex;
+    flex-wrap: wrap;*/
+}
+.empty{
+    background-color: #ffffff;
+    opacity: 0.8;
+    background: 
+        radial-gradient(circle, transparent 20%, #ffffff 20%, #ffffff 80%, transparent 80%, transparent), 
+        radial-gradient(circle, transparent 20%, #ffffff 20%, #ffffff 80%, transparent 80%, transparent) 23px 23px, 
+        linear-gradient(#f74545 2px, transparent 2px) 0 -1px, 
+        linear-gradient(90deg, #f74545 2px, #ffffff 2px) -1px 0;
+}
+.tile {
+    width: 48px;
+    height: 48px;
+    box-sizing: border-box;
+    border: 1px solid lightgray;
+    margin: 0;
+    padding: 0;
+
+    /* Text */
+    font-size: 20px;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+#digits {
+    width: 450px;
+    height: 50px;
+
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.number {
+    width: 44px;
+    height: 44px;
+    border: 1px solid black;
+    margin: 2px;
+
+    /* Text */
+    font-size: 20px;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.number-selected {
+    background-color: gray;
+}
+.test{
+    background-color: rgb(234, 0, 255) !important;
+}
+.rowtest{
+    color: red !important;
+    /*background-color: red !important;*/
+}
+.coltest{
+    color: rgb(132, 233, 0) !important;
+}
+
+.tile-start {
+    background-color: whitesmoke;
+}
+
+.horizontal-line {
+    border-bottom: 1px solid black;
+}
+
+.vertical-line {
+    border-right: 1px solid black;
+}
