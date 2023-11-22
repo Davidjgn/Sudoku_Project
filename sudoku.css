@@ -16,20 +16,26 @@ hr {
     height: 450px;
 
     margin: 0 auto;
-    
-    display: grid;
-    grid-template-columns: auto auto auto auto auto auto auto auto auto;
-    gap: 0;
-    /*display: flex;
-    flex-wrap: wrap;*/
+    display: flex;
+    flex-wrap: wrap;
 }
 
 .tile {
-    width: 48px;
-    height: 48px;
+    width: 44px; 
+    height: 44px;
     border: 1px solid lightgray;
-    margin: 0;
-    padding: 0;
+
+    /* Text */
+    font-size: 20px;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+input{
+    width: 44px; 
+    height: 44px;
+    border: 1px solid lightgray;
 
     /* Text */
     font-size: 20px;
@@ -38,25 +44,24 @@ hr {
     justify-content: center;
     align-items: center;
     text-align: center;
+    
 }
 
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-}
-
-#digits {
-    width: 450px;
+button {
+    width: 225px;
     height: 50px;
-
+    font-size: 20px;
+    font-weight: bold;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
     margin: 0 auto;
     display: flex;
     flex-wrap: wrap;
 }
 
 .number {
-    width: 44px;
+    width: 44px; 
     height: 44px;
     border: 1px solid black;
     margin: 2px;
@@ -83,4 +88,15 @@ input::-webkit-inner-spin-button {
 
 .vertical-line {
     border-right: 1px solid black;
+}
+
+.test{
+    background-color: rgb(234, 0, 255) !important;
+}
+.rowred{
+    color: red !important;
+    /*background-color: red !important;*/
+}
+.coltest{
+    color: rgb(132, 233, 0) !important;
 }

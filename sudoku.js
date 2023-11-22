@@ -1,6 +1,4 @@
-    
-let numSelected = null;
-let tileSelected = null;
+
 let loadDataInfo = null
 var errors = 0;
 let board = Array.from({ length: 9 }, () => Array.from({ length: 9 }, () => 0));
@@ -24,7 +22,7 @@ let loadPromise = new Promise((load, error) => {
         else
             error(httpReq.statusText);
     }
-    httpReq.open("GET", "./MOCK_DATAChanged.json");
+    httpReq.open("GET", "./MOCK_DATA.json");
     httpReq.send();
 }).then(MockData, errorFun);
 
@@ -90,15 +88,15 @@ function createSudokuBoard(data) {
         }
     }
 
-     // Board 9x9
-     for (let r = 0; r < 9; r++) {   // row loop 
+    // Board 9x9
+    for (let r = 0; r < 9; r++) {   // row loop 
         //debugger;
         for (let c = 0; c < 9; c++) {  //column loop
             //let tile = document.createElement("div");
             let tile = document.createElement("input");
             tile.type = "text";
             tile.id = r.toString() + "-" + c.toString();  // assign each box row&column id  0-0
-            if (board[r][c] != "0") {  
+            if (board[r][c] != "0") {
                 //tile.innerText = board[r][c];
                 tile.value = board[r][c];
                 tile.setAttribute("disabled", true);
@@ -112,28 +110,28 @@ function createSudokuBoard(data) {
             }
             tile.addEventListener("change", validInput);
             tile.classList.add("tile");
-           
+
             document.getElementById("board").append(tile);
         }
     }
 
 }
 
-const validInput = (event)=>{
+const validInput = (event) => {
     let flag = false;
-    for(let i = 1; i<10;i++){
-        if(event.target.value == i || event.target.value == ''){
+    for (let i = 1; i < 10; i++) {
+        if (event.target.value == i || event.target.value == '') {
             flag = true;
-            if(event.target.value != ''){
+            if (event.target.value != '') {
                 event.target.classList.remove("empty");
                 event.target.classList.remove("test");
                 const [r, c] = event.target.id.split('-').map(Number);
-                board[r][c]= Number(event.target.value);
+                board[r][c] = Number(event.target.value);
             }
             break;
         }
     }
-    if(flag == false){
+    if (flag == false) {
         alert("Please input only one digit from 1-9")
         event.target.value = '';
         event.target.classList.add("empty");
@@ -159,14 +157,18 @@ function checkDuplicates(board) {
         for (let j = 0; j < board[i].length; j++) {
             if (board[i][j] !== 0) {
                 if (rowMap[board[i][j]]) {
+                    document.getElementById(`${i}-${j}`).classList.add("rowred");
+                    errors += 1
                     debugger;
                     alert("Duplicate elements exist");
                     return true; // Duplicate found in row
                 }
                 rowMap[board[i][j]] = true;
+                document.getElementById("errors").innerText = errors;
             }
-            else{
-                alert("You need complete all squares");
+            else {
+                alert("Please fill out the empty boxes");
+                return false;
             }
         }
     }
@@ -177,11 +179,14 @@ function checkDuplicates(board) {
         for (let i = 0; i < board.length; i++) {
             if (board[i][j] !== 0) {
                 if (colMap[board[i][j]]) {
+                    document.getElementById(`${i}-${j}`).classList.add("rowred");
+                    errors += 1
                     debugger;
                     alert("Duplicate elements exist");
                     return true; // Duplicate found in column
                 }
                 colMap[board[i][j]] = true;
+                document.getElementById("errors").innerText = errors;
             }
         }
     }
@@ -194,11 +199,14 @@ function checkDuplicates(board) {
                 for (let j = col; j < col + 3; j++) {
                     if (board[i][j] !== 0) {
                         if (subgridMap[board[i][j]]) {
+                            document.getElementById(`${i}-${j}`).classList.add("rowred");
+                            errors += 1
                             debugger;
                             alert("Duplicate elements exist");
                             return true; // Duplicate found in subgrid
                         }
                         subgridMap[board[i][j]] = true;
+                        document.getElementById("errors").innerText = errors;
                     }
                 }
             }
