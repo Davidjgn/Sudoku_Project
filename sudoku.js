@@ -4,7 +4,7 @@ let errors = 0;  // = counter variable
 
 // generating 9 arrays which include 9 arrays inside, 9 * 9 matrix
 let board = Array.from({ length: 9 }, () => Array.from({ length: 9 }, () => 0));
-console.log(board);
+//console.log(board);
 
 
 // STEP2 MockData function called with JSON data (parameter coming from promise)
@@ -13,7 +13,7 @@ const MockData = (data) => {
     loadDataInfo = JSON.parse(data);  // JSON data parsed and stored in loadDataInfo variable 
     createSudokuBoard(loadDataInfo);  // loadDataInfo passed to createSudokuBoard 
 
-    btnGenerate(board);  // calling btnGenerate function (=generating validation button and calling click function)
+    btnGenerate();  // calling btnGenerate function (=generating validation button and calling click function)
 }
 
 const errorFun = (msg) => {
@@ -42,7 +42,7 @@ function createSudokuBoard(data) {   // [{} {} {} {} {} {} {} {} {}]
     for (let i = 0; i < data.length; i++) {
 
         if (i == 0) {  // if data[i] = 0, meaning first object {val: '232234327'}
-            console.log(data[i].val.split('').map(Number))
+            //console.log(data[i].val.split('').map(Number))
             // dividing '232234327' into '2' '3' '2' '2' '3' '4' '3' '2' '7'
             // storing each string into an array, changing them from string to number =>[2, 3, 2, 2, 3, 4, 3, 2, 7]
             // then, assigning a variable to each number
@@ -109,14 +109,12 @@ function createSudokuBoard(data) {   // [{} {} {} {} {} {} {} {} {}]
     for (let r = 0; r < 9; r++) {   // row loop 
         //debugger;
         for (let c = 0; c < 9; c++) {  //column loop
-            //let tile = document.createElement("div");
             let tile = document.createElement("input");
             tile.type = "text";
             tile.id = r.toString() + "-" + c.toString();  // assign each box row&column id  0-0
-            if (board[r][c] != "0") {
-                //tile.innerText = board[r][c];
-                tile.value = board[r][c];
-                tile.setAttribute("disabled", true);
+            if (board[r][c] != "0") { //skipping all the 0 values in the board array
+                tile.value = board[r][c]; //assigning board array values to each tile
+                tile.setAttribute("disabled", true); //disabling tiles with a starting value
                 tile.classList.add("tile-start");
             }
             if (r == 2 || r == 5) {
@@ -125,7 +123,7 @@ function createSudokuBoard(data) {   // [{} {} {} {} {} {} {} {} {}]
             if (c == 2 || c == 5) {  // add vertical line 
                 tile.classList.add("vertical-line");
             }
-            tile.addEventListener("change", validInput);
+            tile.addEventListener("change", validInput); //event listener for user inputs
             tile.classList.add("tile");
 
             document.getElementById("board").append(tile);
@@ -133,55 +131,55 @@ function createSudokuBoard(data) {   // [{} {} {} {} {} {} {} {} {}]
     }
 }
 
-const validInput = (event) => {
+const validInput = (event) => { //Verifying the user can only input a number between 1-9
     let flag = false;
     for (let i = 1; i < 10; i++) {
         if (event.target.value == i || event.target.value == '') {
             flag = true;
             if (event.target.value != '') {
-                event.target.classList.remove("empty");
                 event.target.classList.remove("test");
-                const [r, c] = event.target.id.split('-').map(Number);
-                board[r][c] = Number(event.target.value);
+                const [r, c] = event.target.id.split('-').map(Number); //getting the index numbers
+                board[r][c] = Number(event.target.value); //using the index numbers to store the user input into the board array
             }
             break;
         }
     }
-    if (flag == false) {
-        alert("Please input only one digit from 1-9")
+    if (flag == false) { //if the user writes an invalid input 
+        alert("Please input only one digit from 1-9");
         event.target.value = '';
-        event.target.classList.add("empty");
     }
 }
 
-function btnGenerate(board) {  // creating a validation button and calling validation function when clicked
+function btnGenerate() {  // creating a validation button and calling validation function when clicked
 
-    let btnValid = document.querySelector("button");
+    let btnValid = document.createElement("button");
     btnValid.innerText = "Validation";
     btnValid.type = "button";
+    document.querySelector("body").append(btnValid);
 
     btnValid.addEventListener("click", () => {
-        checkDuplicates(board);
+        checkDuplicates();
     })
 }
 
 // STEP4 duplicated values checked
-function checkDuplicates(board) {
+function checkDuplicates() {
     // debugger;
     // Check rows
     for (let i = 0; i < board.length; i++) {
-        let rowMap = {};
+        let rowMap = {}; //1. rowMap object is initialized for every row, it will store the numbers encountered in the current row as keys
         for (let j = 0; j < board[i].length; j++) {
             if (board[i][j] !== 0) {
-                if (rowMap[board[i][j]]) {
+                console.log(rowMap);
+                if (rowMap[board[i][j]]) { //3. if the value is true, it means it has already been assigned and therefore, is a duplicate.
                     document.getElementById(`${i}-${j}`).classList.add("rowred");
                     errors += 1
                     // debugger;
+                    document.getElementById("errors").innerText = errors;
                     alert("Duplicate elements exist");
                     return true; // Duplicate found in row
                 }
-                rowMap[board[i][j]] = true;
-                document.getElementById("errors").innerText = errors;
+                rowMap[board[i][j]] = true; //2. every number in the row is assigned as a key, with a true value
             }
             else {
                 alert("Please fill out the empty boxes");
@@ -192,17 +190,17 @@ function checkDuplicates(board) {
 
     // Check columns
     for (let j = 0; j < board[0].length; j++) {
-        let colMap = {};
+        let colMap = {};//1. colMap object initialized for every column
         for (let i = 0; i < board.length; i++) {
             if (board[i][j] !== 0) {
-                if (colMap[board[i][j]]) {
+                if (colMap[board[i][j]]) {//3. if the value is true, it means it has already been assigned and therefore, is a duplicate.
                     document.getElementById(`${i}-${j}`).classList.add("rowred");
                     errors += 1
                     // debugger;
                     alert("Duplicate elements exist");
                     return true; // Duplicate found in column
                 }
-                colMap[board[i][j]] = true;
+                colMap[board[i][j]] = true;//2. every number in the row is assigned as a key, with a true value
                 document.getElementById("errors").innerText = errors;
             }
         }
@@ -211,18 +209,18 @@ function checkDuplicates(board) {
     // Check 3x3 subgrids
     for (let row = 0; row < 9; row += 3) {
         for (let col = 0; col < 9; col += 3) {
-            let subgridMap = {};
-            for (let i = row; i < row + 3; i++) {
-                for (let j = col; j < col + 3; j++) {
+            let subgridMap = {};//1. subgridMap object initialized for every subgrid
+            for (let i = row; i < row + 3; i++) {//loops through sets of 3 rows
+                for (let j = col; j < col + 3; j++) {//loops through sets of 3 columns
                     if (board[i][j] !== 0) {
-                        if (subgridMap[board[i][j]]) {
+                        if (subgridMap[board[i][j]]) {//3. if a true value is found, it means there is a duplicate number
                             document.getElementById(`${i}-${j}`).classList.add("rowred");
                             errors += 1
                             // debugger;
                             alert("Duplicate elements exist");
                             return true; // Duplicate found in subgrid
                         }
-                        subgridMap[board[i][j]] = true;
+                        subgridMap[board[i][j]] = true;//2. every number in the subgrid is stored as a key with a true value
                         document.getElementById("errors").innerText = errors;
                     }
                 }
