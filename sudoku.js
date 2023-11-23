@@ -157,7 +157,7 @@ const validInput = (event) => {
 function btnGenerate(board) {  // creating a validation button and calling validation function when clicked
 
     let btnValid = document.querySelector("button");
-    btnValid.innerText = "Validation";
+    btnValid.innerText = "Validate";
     btnValid.type = "button";
 
     btnValid.addEventListener("click", () => {
